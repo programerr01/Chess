@@ -2,6 +2,7 @@ import pygame
 from Piece import Piece
 from pygame.locals import * 
 from Rules import rules
+from time import sleep
 import sys
 #GLOBALS 
 W = 568
@@ -12,9 +13,11 @@ win =None
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 RED = (255,0,0)
+YELLOW = (120,120,0)
 GRAY = (120,120,120)
 turn = "w"
 nm = None
+textToShow = ""
 pos  = [0,0]
 board = [
     ['br','bh','bb','bk','bq','bb','bh','br'],
@@ -84,7 +87,7 @@ def draw_board():
     
 
 def check_for_quit():
-    global clicked,nm,board,pos,turn
+    global clicked,nm,board,pos,turn,textToShow
     for event in pygame.event.get():
         if event.type  == pygame.QUIT:
             pygame.quit()
@@ -102,6 +105,10 @@ def check_for_quit():
                 print(nm,pos)
                 (a,b) = (ms[1]//h,ms[0]//w)
                 if(rules(nm,pos[0],pos[1], a,b,board) and turn == nm[0]):
+                    if(board[a][b] != "" and board[a][b][-1] == "q"):
+                        textToShow =  "white wins" if turn == "w" else "black wins"
+
+
                     board[pos[0]][pos[1]] = ''
                     board[a][b] = nm
                     # nm= None
@@ -124,6 +131,7 @@ def check_for_quit():
 def main():
     global win
     pygame.init()
+    pygame.font.init() 
     win = pygame.display.set_mode((W,H))
     pygame.display.set_caption("CHESS")
     win.fill(RED)
@@ -131,9 +139,14 @@ def main():
     while True:
         draw_board()
         draws_pieces()
-        # img = pygame.image.load("imgs/bb.png")
-        # win.blit(img,(0,0))
         check_for_quit()
+        if(textToShow):
+            win.fill(WHITE)
+            myfont = pygame.font.SysFont('Comic Sans MS', 100)
+            textsurface = myfont.render(textToShow, False, YELLOW)
+            win.blit(textsurface,(2*w,3*h))
+            
+
         pygame.display.update()
 
     print(mvs)
