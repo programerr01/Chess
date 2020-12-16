@@ -4,6 +4,9 @@ from pygame.locals import *
 from Rules import rules
 from time import sleep
 import sys
+from minimax import minimax
+
+from  math import inf
 #GLOBALS 
 W = 568
 H = 560
@@ -30,6 +33,36 @@ board = [
     ['wr','wh','wb','wk','wq','wb','wh','wr'],
     ]
 mvs =[[0 for i in range(8)] for j in range(8)]
+
+
+def play_ai():
+    print("AI IS PLAYING")
+    global board, turn
+    # score = 0
+    best_score = -inf
+    pos = None
+    pos_to_play = None
+    for i in range(8):
+        for j in range(8):
+            b = board[i][j]
+            if(b != ""):
+                if(b[0] != "w"):
+                   score = minimax(board,i,j,2,True)
+                #    print(score)
+                   if(score[1] > best_score):
+                       pos = [i,j]
+                       pos_to_play = [score[0][0],score[0][1]]
+                       
+    if(pos):
+        print(pos,pos_to_play)
+        mv =board[pos[0]][pos[1]]
+        print(mv)
+        if(rules(mv,pos[0],pos[1],pos_to_play[0], pos_to_play[1],board)):
+            board[pos[0]][pos[1]] = ''
+            board[pos_to_play[0]][pos_to_play[1]] = mv
+            initialize()
+            turn = "b" if turn== "w" else "w"
+    
 
 def draws_pieces():
     global nm , board,clicked
@@ -96,7 +129,9 @@ def check_for_quit():
            if event.key == K_ESCAPE:
                pygame.quit()
                sys.exit()
-            
+        if(turn == "b"):
+            print("AI IS ABOUT TO PLAY")
+            play_ai()
         elif event.type == MOUSEBUTTONDOWN:
             print("DSS")
             ms = pygame.mouse.get_pos()
@@ -104,22 +139,22 @@ def check_for_quit():
                 # print(ms[0]//)
                 print(nm,pos)
                 (a,b) = (ms[1]//h,ms[0]//w)
-                if(rules(nm,pos[0],pos[1], a,b,board) and turn == nm[0]):
-                    if(board[a][b] != "" and board[a][b][-1] == "q"):
-                        textToShow =  "white wins" if turn == "w" else "black wins"
-
-
-                    board[pos[0]][pos[1]] = ''
-                    board[a][b] = nm
-                    # nm= None
-                    initialize()
-                    turn = "b" if turn== "w" else "w"
-                    pygame.display.set_caption(turn)
+                if((a,b) != (pos[0],pos[1])):
+                    if(rules(nm,pos[0],pos[1], a,b,board) and turn =="w"):
+                        print(pos,a,b)
+                        if(board[a][b] != "" and board[a][b][-1] == "q"):
+                            textToShow =  "white wins" if turn == "w" else "black wins"
+                        board[pos[0]][pos[1]] = ''
+                        board[a][b] = nm
+                        # nm= None
+                        initialize()
+                        turn = "b" if turn== "w" else "w"
+                        pygame.display.set_caption(turn)
                 # print(board)
-                else:
-                    nm = board[ms[1]//h][ms[0]//w]
-                    # print(nm,"from here")
-                    pos = [ms[1]//h, ms[0]//w]
+                    else:
+                        nm = board[ms[1]//h][ms[0]//w]
+                        # print(nm,"from here")
+                        pos = [ms[1]//h, ms[0]//w]
                 # nm= ''
                 # pos = [0,0]
             else:

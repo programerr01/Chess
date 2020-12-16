@@ -3,6 +3,8 @@ def rules(piece, x1,y1,x2,y2,board):
     Rules for the game of the chess 
     """
 #KING
+    if(piece == ""):
+        return False
 
     if(piece[1] == "k"):
         obstacles = {(ob[0],ob[1]) for ob in board}
@@ -35,9 +37,12 @@ def rules(piece, x1,y1,x2,y2,board):
         else:
             mvs = [(1,0)]
         for m in mvs:
-            if((x1+m[0] == x2 and y1+m[0] == y2) or (x1+ m[0] == x2 and y1 - m[0] == y2)):
-                if((board[x1+m[0]][y1+m[0]] != '') or (board[x1+m[0]][y1-m[0]] !='')):
-                    return True
+            try:
+                if((x1+m[0] == x2 and y1+m[0] == y2) or (x1+ m[0] == x2 and y1 - m[0] == y2)):
+                    if((board[x1+m[0]][y1+m[0]] != '') or (board[x1+m[0]][y1-m[0]] !='')):
+                        return True
+            except:
+                return False
 
             # elif(board[x1+ m[0]][y1+ m[0]] != '' or board[x1-m[0]][y1+m[0]] != ''):
             #     if(y1+ m[0] == y2 or y1 - m[0] == y2):
@@ -63,7 +68,7 @@ def rules(piece, x1,y1,x2,y2,board):
         return False
 
 
-
+    #QUEEN
     elif(piece[1] == "b"):
         # if(piece[0] == "w"):
         #     mvs = [(-1,-1),(-1,1),(1,-1)]
